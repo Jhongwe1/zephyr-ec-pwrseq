@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------- build output
+build/
+build-*/
+twister-out/
+twister-out.*/
+
+# --------------------------------------------------------------------- python
+.venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+
+# ------------------------------------------------- west workspace guard rails
+# This repo is the MANIFEST repo; the workspace lives in the PARENT directory,
+# so none of these should ever appear here.  They are listed anyway: running
+# `west init` from inside the repo by mistake drops a multi-gigabyte Zephyr
+# tree in the working directory, and `git add -A` after that is unrecoverable
+# without a rewrite.
+/.west/
+/zephyr/
+/modules/
+/bootstrap.log
+/.bootstrap-apt-done
+
+# ----------------------------------------------------------- editor / OS junk
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# ------------------------------------------------------------------- PRIVATE
+# Job-search planning material must never reach a public repository.  It is
+# kept outside this directory on purpose; these entries exist so that an
+# accidental copy cannot be committed.
+plan/
+archive/
+*_plan_*.md
+淘宝采购清单.txt
+淘寶採購清單.txt
+
+# ----------------------------------------------------------------- measurement
+# Raw captures ARE evidence and ARE committed -- `make evidence` regenerates
+# every figure from them, which is what makes the timing numbers checkable
+# rather than merely claimed.  See captures/README.md for the size policy.
+# Nothing under captures/ is ignored by design.  Do not "clean this up".
