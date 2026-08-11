@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# West manifest for zephyr-ec-pwrseq.
+#
+# This repository is the MANIFEST REPO of its own west workspace (Zephyr "T2"
+# topology).  Cloning this repo and running `west init -l . && west update`
+# reproduces the exact Zephyr tree this project was built and measured against.
+#
+#   ec-ws/                     <- workspace top directory
+#   |-- .west/                 <- created by `west init -l`
+#   |-- zephyr-ec-pwrseq/      <- THIS REPO (the manifest repo + the application)
+#   |-- zephyr/                <- fetched by `west update`, pinned below
+#   `-- modules/               <- fetched by `west update`
+#
+# Why pin at all:
+#   Every timing number and every waveform in README.md was produced against
+#   one specific Zephyr tree.  An unpinned manifest means a reader gets a
+#   different tree than the one that was measured, and "reproducible" becomes
+#   a claim instead of a fact.  It also stops CI from turning red because
+#   upstream main moved while nothing in this repo changed.
+#
+# Why v4.4.2 and not v4.4.0:
+#   4.4.0 (2026-04) is the first Zephyr release supporting Zephyr SDK 1.0.
+#   4.4.1 and 4.4.2 are maintenance releases on that same 4.4 branch --
+#   bug fixes only, no API changes -- so taking the newest patch level costs
+#   nothing and picks up fixes.  The pin is re-evaluated on each MINOR release
+#   (4.5, 4.6, ...), because those may change APIs; see docs/runbook/R01.
+#
+# How to move the pin (do this deliberately, never casually):
+#   1. change `revision` below
+#   2. west update
+#   3. make test && make build          <- both must stay green
+#   4. commit the manifest change ALONE, with the reason in the message
+
+manifest:
+  self:
+    path: zephyr-ec-pwrseq
+
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: v4.4.2
+      # TODO(W07): once the module set is known (`west list`), narrow this to
+      # `import: {name-allowlist: [...]}`.  A trimmed workspace makes CI
+      # noticeably faster.  Not done now: a wrong allowlist fails the build
+      # with a confusing error, and W01 must not be blocked on an
+      # optimisation.  Correctness first, then speed.
+      import: true
