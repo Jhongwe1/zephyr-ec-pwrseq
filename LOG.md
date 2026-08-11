@@ -207,6 +207,35 @@ WSL2 預設看不到 USB 裝置。兩條路：
 
 ---
 
+### 🐛 第一次 CI 是紅的：`exit code 127`
+
+推上 GitHub 後第一次 CI 跑完：`build-and-test` **全綠**（兩個目標都編過、
+warnings-as-errors、twister 通過），但 `lint` **紅了**。
+
+- **現象：** `shellcheck` 這一步 `Process completed with exit code 127`。
+- **關鍵在於認得 127 這個數字：** shell 的 **127 = command not found**。
+  （126 = 找到了但不能執行；1 = 程式自己回報失敗。）
+  **所以這不是「我的腳本有問題」，是「shellcheck 這個程式不存在」。**
+  如果沒認出 127，很容易一頭栽進去看 `tools/*.sh` 哪裡寫錯——那會白花一小時。
+- **根因：** 我把 lint 放在 Zephyr 官方 CI 容器裡跑。那個容器有 `clang-format`
+  （所以那一步是綠的），但**沒有 `shellcheck`**。我當初假設了「lint 工具都在同一個容器裡」，
+  沒有驗證過。
+- **解法：** 把 lint 拆成兩個 job：
+  - `format` 留在 Zephyr 容器裡——**這是刻意的**，容器裡的 clang-format
+    正是 Zephyr `.clang-format` 寫作時對應的版本，才不會因為版本差異跟上游吵架
+  - `shellcheck` 改跑在乾淨的 ubuntu runner，而且先 `command -v` 檢查、
+    沒有才 `apt-get install`（GitHub 的 runner image 有附，但那是 image 的性質、不是承諾）
+- **順手修掉：** `actions/checkout@v4` / `upload-artifact@v4` 會噴 Node 20 已棄用的警告。
+  查證後兩者的最新主版本都是 **v7**（moving tag 確認存在才改，沒有用猜的）。
+- **教訓：**
+  1. **exit code 是有語意的，先讀它再讀 log。** 127 直接把「環境問題」跟「程式問題」分開了——
+     跟 `make doctor` 想做的事一模一樣。
+  2. **本機全綠不等於 CI 會綠。** 我本機是 `apt install` 過 shellcheck 才跑的，
+     而 CI 的容器是另一個世界。這正是 CI 存在的價值：它抓的就是「在我電腦上是好的」。
+  3. **一個 job 混兩種工具，紅了看不出是誰的錯。** 拆開之後 job 名稱本身就是診斷。
+
+---
+
 ## 待辦（滾動）
 
 - [ ] **架構圖要自己畫**（手畫拍照或 draw.io 都可以，醜沒關係）→ `docs/img/architecture.*`

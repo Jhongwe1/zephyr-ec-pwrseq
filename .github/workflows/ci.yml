@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
-# What this proves, and why it is worth the ~3 minutes per push:
+# What this proves, and why it is worth the ~5 minutes per push:
 #
 #   1. the code actually builds -- for BOTH targets, from a clean checkout,
 #      by someone who is not me, on a machine that is not mine
@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - name: Checkout application
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Checked out as a subdirectory because this repo is the west
           # MANIFEST repo: its parent becomes the workspace top directory,
@@ -70,7 +70,7 @@ jobs:
 
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: twister-reports
           path: |
@@ -78,18 +78,41 @@ jobs:
             twister-out/twister.json
           if-no-files-found: ignore
 
-  lint:
+  # Formatting runs INSIDE the Zephyr container on purpose: it carries the
+  # clang-format that Zephyr's own .clang-format was written against, so the
+  # check cannot disagree with upstream over a version difference.
+  format:
     runs-on: ubuntu-24.04
     container: ghcr.io/zephyrproject-rtos/ci:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: clang-format (Zephyr style)
         run: |
+          clang-format --version
           files=$(find src include tests -name '*.[ch]' 2>/dev/null)
           if [ -n "$files" ]; then
             echo "$files" | xargs clang-format --dry-run --Werror
           fi
 
+  # Shellcheck runs on the PLAIN runner, not the Zephyr container.
+  #
+  # The first CI run failed here with exit 127 -- shellcheck simply is not in
+  # the Zephyr image, and "command not found" inside a container reads exactly
+  # like a real lint failure until you look at the code. Splitting it out puts
+  # each tool where it actually lives and makes a red job name mean one thing.
+  shellcheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
       - name: shellcheck
-        run: shellcheck tools/*.sh
+        run: |
+          # GitHub's ubuntu images ship shellcheck, but that is a property of
+          # the runner image rather than a promise -- so check, then install.
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq shellcheck
+          fi
+          shellcheck --version
+          shellcheck tools/*.sh
