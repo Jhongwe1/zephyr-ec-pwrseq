@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Listed for BOTH platforms on purpose.
+#
+#   native_sim         runs in CI on every push, no hardware
+#   blackpill_f411ce   the same assertions, on the real clock tree
+#
+# The cycle-counter check is the one test whose answer can differ between the
+# simulator and the silicon -- native_sim's clock is a model, the board's is a
+# PLL somebody configured.  A test that only ever runs on the model cannot
+# catch a misconfigured PLL, which is precisely the failure it exists for.
+
+tests:
+  ec.smoke.plumbing:
+    platform_allow:
+      - native_sim
+      - blackpill_f411ce
+    tags:
+      - smoke
+    harness: ztest
