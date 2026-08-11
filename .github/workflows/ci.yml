@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# What this proves, and why it is worth the ~3 minutes per push:
+#
+#   1. the code actually builds -- for BOTH targets, from a clean checkout,
+#      by someone who is not me, on a machine that is not mine
+#   2. the fault-injection suite passes without any hardware attached
+#   3. zero compiler warnings, enforced rather than intended
+#
+# (1) is not a trivial claim in 2026: a repository that does not build is the
+# most common tell of code that was never run.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+
+    # Official Zephyr CI image: SDK and host tools preinstalled, so CI does not
+    # spend four minutes reinstalling a toolchain on every push.
+    # TODO(W07): pin this to a digest. `latest` contradicts the pinning
+    # discipline applied to Zephyr itself in west.yml -- the only reason it is
+    # not pinned yet is that the correct tag has not been verified, and an
+    # unverified pin fails closed on every push.
+    container: ghcr.io/zephyrproject-rtos/ci:latest
+
+    env:
+      CMAKE_PREFIX_PATH: /opt/toolchains
+
+    steps:
+      - name: Checkout application
+        uses: actions/checkout@v4
+        with:
+          # Checked out as a subdirectory because this repo is the west
+          # MANIFEST repo: its parent becomes the workspace top directory,
+          # exactly as on a developer machine.
+          path: zephyr-ec-pwrseq
+          fetch-depth: 0
+
+      - name: Initialise west workspace
+        run: |
+          west init -l zephyr-ec-pwrseq
+          west update --narrow -o=--depth=1
+          west zephyr-export
+
+      - name: Report the tree under test
+        run: |
+          echo "Zephyr version:"
+          cat zephyr/VERSION
+          west list
+
+      - name: Build for blackpill_f411ce (warnings are errors)
+        run: |
+          west build -p always -b blackpill_f411ce zephyr-ec-pwrseq \
+            -- -DCONFIG_COMPILER_WARNINGS_AS_ERRORS=y
+
+      - name: Build for native_sim (warnings are errors)
+        run: |
+          west build -p always -b native_sim zephyr-ec-pwrseq \
+            -- -DCONFIG_COMPILER_WARNINGS_AS_ERRORS=y
+
+      - name: Fault-injection tests on native_sim
+        run: west twister -T zephyr-ec-pwrseq/tests -p native_sim --inline-logs
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twister-reports
+          path: |
+            twister-out/twister.xml
+            twister-out/twister.json
+          if-no-files-found: ignore
+
+  lint:
+    runs-on: ubuntu-24.04
+    container: ghcr.io/zephyrproject-rtos/ci:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: clang-format (Zephyr style)
+        run: |
+          files=$(find src include tests -name '*.[ch]' 2>/dev/null)
+          if [ -n "$files" ]; then
+            echo "$files" | xargs clang-format --dry-run --Werror
+          fi
+
+      - name: shellcheck
+        run: shellcheck tools/*.sh
