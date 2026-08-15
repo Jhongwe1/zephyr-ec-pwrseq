@@ -98,7 +98,7 @@ lint: ## static checks (same ones CI runs)
 
 .PHONY: evidence
 evidence: ## regenerate every figure and timing number from captures/
-	@echo "Not implemented until P4 (W06+)."
+	@echo "Not implemented until P4."
 	@echo "It will re-derive docs/measurements.md and docs/img/*.png from"
 	@echo "the raw captures in captures/, so that every number in the README"
 	@echo "is checkable rather than merely claimed."

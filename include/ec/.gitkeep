@@ -1,4 +1,4 @@
-# Public headers for the EC modules land here from W03:
+# Public headers for the EC modules land here from P1:
 #   pwrseq.h    sequencer interface
 #   ec_trace.h  cycle-timestamped event trace
 #   ec_fault.h  fault codes F1..F8

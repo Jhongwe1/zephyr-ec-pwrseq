@@ -46,7 +46,7 @@ INFO - 1 of 1 executed test configurations passed (100.00%), 0 built (not run),
 **`make build` 應該印出：**
 ```
 Memory region         Used Size  Region Size  %age Used
-           FLASH:       27728 B       512 KB      5.29%
+           FLASH:       27724 B       512 KB      5.29%
              RAM:        6720 B       128 KB      5.13%
 ```
 
@@ -64,11 +64,11 @@ make run
 
 ```
 *** Booting Zephyr OS build dccb09599635 ***
-<inf> ec_main: zephyr-ec-pwrseq (W01 skeleton)
+<inf> ec_main: zephyr-ec-pwrseq (P0 skeleton)
 <inf> ec_main: board  : native_sim/native
 <inf> ec_main: zephyr : 4.4.2
 <inf> ec_main: cycle counter: 1000000 Hz (1000 ns per tick)
-<inf> ec_main: skeleton up; sequencer lands in W03
+<inf> ec_main: skeleton up; sequencer lands in P1
 ```
 
 Ctrl+C 結束。

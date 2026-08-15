@@ -86,10 +86,10 @@ Two independent reasons, and the second is architectural:
 ## Why two logic analysers
 
 It is the only instrument in this project that cannot be substituted by
-software, and it gates the single most important week (first waveform, W06).
-Unit cost is trivial; a dead-on-arrival unit costs a reorder plus international
-shipping, landing squarely on that week. Buying the spare is the cheapest
-schedule insurance available.
+software, and it gates P4 completely: with no capture, every timing number in
+the README stays a claim. Unit cost is trivial; a dead-on-arrival unit costs a
+reorder plus international shipping. The spare is the cheapest available
+insurance against a single point of failure in the evidence chain.
 
 **It must be the cheap `CY7C68013A` one.** More expensive analysers (Kingst,
 DSLogic, ZEROPLUS) ship proprietary software with incomplete sigrok support —

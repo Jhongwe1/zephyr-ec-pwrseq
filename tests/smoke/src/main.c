@@ -12,14 +12,14 @@
  *   docs/runbook/R99-troubleshooting.md.
  *
  * WHAT IT ACTUALLY CHECKS
- *   The one thing at W01 that is genuinely load-bearing for everything after
+ *   The one thing at P0 that is genuinely load-bearing for everything after
  *   it: that the two clocks this project measures time with agree.
  *
  *   - k_uptime_get()    millisecond wall clock, used for timeouts
  *   - k_cycle_get_32()  cycle counter, used to timestamp EN and PG edges
  *
  *   Every timing number this project will ever publish is derived from the
- *   second one, and in W08 those timestamps get compared against a logic
+ *   second one, and in P4 those timestamps get compared against a logic
  *   analyser's independent measurement of the same edges.  If
  *   sys_clock_hw_cycles_per_sec() does not describe the counter that
  *   k_cycle_get_32() reads -- a genuine possibility when the SoC clock tree
@@ -27,7 +27,7 @@
  *   delay is silently wrong -- then that comparison is meaningless, and so is
  *   the timing budget built on top of it.
  *
- *   Catching that here costs one test.  Catching it in W08, from a waveform
+ *   Catching that here costs one test.  Catching it in P4, from a waveform
  *   that disagrees with the firmware by 30%, costs a weekend.
  */
 

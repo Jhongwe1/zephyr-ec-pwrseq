@@ -4,8 +4,8 @@
 
 | 檔案 | 用途 | 何時 |
 |---|---|:--:|
-| `blackpill_f411ce.overlay` | 實體板：真 GPIO | W02 |
-| `native_sim.overlay` | 模擬：**同構節點**接 `gpio_emul` | W07 |
+| `blackpill_f411ce.overlay` | 實體板：真 GPIO | P1 |
+| `native_sim.overlay` | 模擬：**同構節點**接 `gpio_emul` | P3 |
 
 **兩份 overlay 的節點結構必須一模一樣，只有 GPIO 來源不同。**
 這是「同一支時序引擎能同時跑在真板子與 CI 上」的全部祕密——

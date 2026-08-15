@@ -37,8 +37,8 @@
 ```
 ┌─ Windows 11 ───────────────────────────────────────────────┐
 │                                                             │
-│   PulseView + Zadig      ← 邏輯分析儀（W06 才用到）          │
-│   STM32CubeProgrammer    ← 燒錄備援（W02 才用到）            │
+│   PulseView + Zadig      ← 邏輯分析儀（P4 才用到）          │
+│   STM32CubeProgrammer    ← 燒錄備援（板到貨才用到）          │
 │                                                             │
 │   ┌─ WSL2：Ubuntu 24.04 ───────────────────────────────┐   │
 │   │                                                     │   │
@@ -60,14 +60,14 @@
 
 > **你可以在完全沒有硬體的情況下，跑完整的故障注入測試，而且跑在 GitHub CI 上。**
 
-這是這個專案能自動化驗證的地基。沒有它，你的測試只能手動按按鈕做一次，
-整個專案就退回「學生作業」等級。**所以這一步沒得商量。**
+這是這個專案能自動化驗證的地基。沒有它，故障注入只能靠手動按按鈕做一次，
+既不可重現、也沒有人能在自己的機器上驗證。**所以這一步沒得商量。**
 
 ### 三個之後一定會咬到你的觀念
 
 | 觀念 | 說明 |
 |---|---|
-| **程式碼要放在 Linux 裡（`~/`），不要放在 `/mnt/c/`** | `/mnt/c/` 是從 Linux 存取 Windows 硬碟的橋接層，很慢。Zephyr 一次 build 有上百個檔案，放 `/mnt/c/` 會慢好幾倍。這個專案 13 週會 build 幾百次。`make doctor` 會檢查並警告你。 |
+| **程式碼要放在 Linux 裡（`~/`），不要放在 `/mnt/c/`** | `/mnt/c/` 是從 Linux 存取 Windows 硬碟的橋接層，很慢。Zephyr 一次 build 有上百個檔案，放 `/mnt/c/` 會慢好幾倍。這個專案會 build 幾百次。`make doctor` 會檢查並警告你。 |
 | **每開一個新終端機，都要先啟用 Python 虛擬環境** | 沒做的話 `west` 會找不到。第 6 節有一行 alias 幫你解決。 |
 | **從 Windows 編輯 Linux 裡的檔案會弄掉「可執行」權限** | 用 VS Code 的 WSL 模式編輯就不會有這個問題（第 6 節）。`make doctor` 也會檢查。 |
 
@@ -306,7 +306,7 @@ Summary
 **有 FAIL 怎麼辦：** 每個 FAIL 下面都有一行 `->` 告訴你怎麼修。修完再跑一次。
 
 > `git identity` 那行如果 FAIL，照它給的指令設定。**這不是裝飾**——
-> W10 要送 PR 到 Zephyr 主線時，DCO 規定 `Signed-off-by` 必須跟 commit 作者完全一致、
+> P6 要送 PR 到 Zephyr 主線時，DCO 規定 `Signed-off-by` 必須跟 commit 作者完全一致、
 > 而且要用**真名**。到那時候才發現設錯，就得改寫整段 git 歷史。
 
 ### 關卡 2：測試（不需要硬體）
@@ -333,7 +333,7 @@ make build
 **你應該看到：**
 ```
 Memory region         Used Size  Region Size  %age Used
-           FLASH:       27728 B       512 KB      5.29%
+           FLASH:       27724 B       512 KB      5.29%
              RAM:        6720 B       128 KB      5.13%
 Generating files from .../zephyr.elf for board: blackpill_f411ce/stm32f411xe
 ```
@@ -350,18 +350,18 @@ make run
 **你應該看到：**
 ```
 *** Booting Zephyr OS build dccb09599635 ***
-<inf> ec_main: zephyr-ec-pwrseq (W01 skeleton)
+<inf> ec_main: zephyr-ec-pwrseq (P0 skeleton)
 <inf> ec_main: board  : native_sim/native
 <inf> ec_main: zephyr : 4.4.2
 <inf> ec_main: cycle counter: 1000000 Hz (1000 ns per tick)
-<inf> ec_main: skeleton up; sequencer lands in W03
+<inf> ec_main: skeleton up; sequencer lands in P1
 ```
 
 按 **Ctrl+C** 結束。
 
 > 那行 `cycle counter` 不是裝飾。它是這個專案之後**每一個時間數字的解析度上限**。
 > `native_sim` 上是 1 MHz（1 µs），真板子上會是約 100 MHz（約 10 ns）。
-> W08 要拿韌體自己記的時間戳跟邏輯分析儀量到的時間互相驗證，
+> P4 要拿韌體自己記的時間戳跟邏輯分析儀量到的時間互相驗證，
 > 這個數字對不對，決定那個比對有沒有意義。
 
 ---
@@ -433,7 +433,7 @@ git commit           # 訊息寫「為什麼」，不是「改了什麼」
 ## 附錄 A：這些版本是怎麼決定的
 
 > 三個月後的你會問「當初為什麼選這個」。寫在這裡，省得重新想一次。
-> 面試也會問。
+> 版本選擇是會被追問的那類決定，答案應該在檔案裡，不是在記憶裡。
 
 ### A.1 為什麼 Zephyr 釘在 v4.4.2
 
@@ -452,7 +452,7 @@ git commit           # 訊息寫「為什麼」，不是「改了什麼」
 完整的 Zephyr git 歷史約 2.5 GB、20–40 分鐘。淺層抓取小十倍、快十倍，
 而**編譯完全不需要歷史紀錄**。
 
-代價是沒有 git 歷史可查。W09/W10 要做上游貢獻、需要 `git blame` 或 `git log` 時，再補回來就好：
+代價是沒有 git 歷史可查。P6 要做上游貢獻、需要 `git blame` 或 `git log` 時，再補回來就好：
 
 ```bash
 cd ~/work/ec-ws/zephyr && git fetch --unshallow
@@ -478,7 +478,7 @@ Zephyr SDK 支援十幾種架構，全裝要好幾 GB。這個專案只需要兩
 
 `/mnt/c/` 是 WSL 存取 Windows 檔案系統的橋接層，每個檔案操作都要跨越一層轉譯。
 Zephyr 一次乾淨編譯會碰上千個檔案；放在 `/mnt/c/` 會慢好幾倍。
-這個專案 13 週會編譯幾百次，累積起來是好幾個小時。
+這個專案會編譯幾百次，累積起來是好幾個小時。
 
 `make doctor` 會偵測並警告，但不會擋你——如果你有別的理由要放那裡，那是你的決定。
 
@@ -518,4 +518,4 @@ west update --narrow -o=--depth=1        # west.yml 改過之後
 ---
 
 **下一步：** 板子到貨了 → [R02 硬體接線](R02-hardware.md)。
-還沒到 → 直接進 W03 的時序引擎，那部分完全不需要硬體。
+還沒到 → 直接進 P1 的時序引擎，那部分完全不需要硬體。

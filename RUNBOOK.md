@@ -47,12 +47,16 @@ messages are in English.*
 | 階段 | 內容 | 狀態 | 完成日 |
 |---|---|:--:|---|
 | **P0** | 環境 + 工具鏈 + repo 骨架 | ✅ **完成** | 2026-08-12 |
-| P1 | DT 驅動時序引擎，三軌依序上電 | ⬜ 未開始 | 目標 W03 |
-| P2 | F1–F4 故障保護 + 反序關閉 + 四不變式 + SMF 階層 | ⬜ 未開始 | 目標 W05 |
-| P3 | native_sim + gpio_emul + ztest 故障矩陣 + CI | 🟡 地基已就緒 | 目標 W07 |
-| P4 | 邏輯分析儀量測 + 標註 + 證據流水線 | ⬜ 未開始 | 目標 W08 |
-| P5 | 加值（SBS 電池 / ACPI EC / HIL）擇一 | ⬜ 未開始 | 目標 W10 |
-| P6 | 上游 PR 到 Zephyr 主線 | ⬜ 未開始 | 目標 W10 |
+| **P1** | DT 驅動時序引擎，三軌依序上電 | ⬜ **下一個** | — |
+| P2 | F1–F4 故障保護 + 反序關閉 + 四不變式 + SMF 階層 | ⬜ 未開始 | — |
+| P3 | native_sim + gpio_emul + ztest 故障矩陣 + CI | 🟡 地基已就緒 | — |
+| P4 | 邏輯分析儀量測 + 標註 + 證據流水線 | ⬜ 未開始 | — |
+| P5 | 加值（SBS 電池 / ACPI EC / HIL）擇一 | ⬜ 未開始 | — |
+| P6 | 上游 PR 到 Zephyr 主線 | ⬜ 未開始 | — |
+
+**階段是有順序的，但這張表不填預定日期**——日期是做完之後才補上去的。
+預定日期不是事實，而這份文件裡只放事實。P1–P6 是這個 repo 對外的統一階段編號，
+README、程式碼註解、TODO 都用同一套。
 
 **P0 實際驗收結果（2026-08-12）**
 
@@ -62,22 +66,22 @@ messages are in English.*
 | `native_sim` 編得出且跑得起來 | ✅ 印出 banner |
 | 本 repo 的測試在 twister 下全綠 | ✅ 1/1 passed |
 | 環境自檢 | ✅ `make doctor` 全 PASS |
-| 實體板燒錄（Smoke 3） | ⬜ **板未到貨**，順延至 W02 |
+| 實體板燒錄（Smoke 3） | ⬜ **板未到貨**，順延至到貨後 |
 
 ---
 
 ## 2. 我想做什麼？（選一條路）
 
-| 我想… | 去哪 | 要多久 |
+| 我想… | 去哪 | 狀態 |
 |---|---|:--:|
-| **我已經有 Linux / WSL，直接跑起來看看** | [R00 快速開始](docs/runbook/R00-quickstart.md) | 20 min |
-| **我的電腦什麼都沒有，從零開始** | [R01 環境建置](docs/runbook/R01-environment.md) | 60–90 min |
-| **接硬體、接線、拍照** | [R02 硬體](docs/runbook/R02-hardware.md) | W02 |
-| **每天開發的固定循環** | [R03 日常迴圈](docs/runbook/R03-daily-loop.md) | W03 |
-| **跑故障注入測試** | [R04 測試](docs/runbook/R04-testing.md) | W07 |
-| **接邏輯分析儀量波形** | [R05 量測](docs/runbook/R05-measurement.md) | W06 |
-| **一鍵重現所有圖表與數字** | [R06 證據流水線](docs/runbook/R06-evidence.md) | W08 |
-| **壞掉了 / 看到看不懂的錯誤** | [R99 疑難排解](docs/runbook/R99-troubleshooting.md) | — |
+| **我已經有 Linux / WSL，直接跑起來看看** | [R00 快速開始](docs/runbook/R00-quickstart.md) | ✅ 20 min |
+| **我的電腦什麼都沒有，從零開始** | [R01 環境建置](docs/runbook/R01-environment.md) | ✅ 60–90 min |
+| **接硬體、接線、拍照** | [R02 硬體](docs/runbook/R02-hardware.md) | 板到貨後補 |
+| **每天開發的固定循環** | [R03 日常迴圈](docs/runbook/R03-daily-loop.md) | ✅ 部分完成 |
+| **跑故障注入測試** | [R04 測試](docs/runbook/R04-testing.md) | P3 補 |
+| **接邏輯分析儀量波形** | [R05 量測](docs/runbook/R05-measurement.md) | P4 補 |
+| **一鍵重現所有圖表與數字** | [R06 證據流水線](docs/runbook/R06-evidence.md) | P4 補 |
+| **壞掉了 / 看到看不懂的錯誤** | [R99 疑難排解](docs/runbook/R99-troubleshooting.md) | ✅ 滾動更新 |
 
 ---
 
@@ -105,17 +109,17 @@ make build     # 編譯給實體板的韌體
 zephyr-ec-pwrseq/
 ├── RUNBOOK.md              ← 你正在讀的這份
 ├── README.md               ← 對外的專案說明（英文）
-├── LOG.md                  ← 工程日誌。每天 5 分鐘，是面試素材的礦場
+├── LOG.md                  ← 工程日誌。現象→假設→驗證→根因→教訓
 │
 ├── west.yml                ← 釘住 Zephyr 版本。「可重現」的來源
 ├── Makefile                ← 所有指令的正門
 ├── CMakeLists.txt / prj.conf
 │
 ├── boards/                 ← 每塊板子一份 overlay
-│   ├── blackpill_f411ce.overlay   （W02）真 GPIO
-│   └── native_sim.overlay         （W07）gpio_emul，同構節點
+│   ├── blackpill_f411ce.overlay   （P1）真 GPIO
+│   └── native_sim.overlay         （P3）gpio_emul，同構節點
 │
-├── dts/bindings/power/     ← 自訂 devicetree binding（W02）
+├── dts/bindings/power/     ← 自訂 devicetree binding（P1）
 │                             這裡定義「一條電源軌」有哪些屬性
 │
 ├── src/                    ← 韌體
@@ -157,7 +161,8 @@ ec-ws/                      ← workspace 頂層
 
 ## 5. 我在這個專案裡對自己的約束
 
-這幾條是刻意的，不是隨便寫的。破壞它們專案就會退化成「一個學生作業」：
+這幾條是刻意的，不是隨便寫的。少了任何一條，這個 repo 就退回成「一個會動的 demo」——
+能跑，但沒有任何一個數字經得起追問：
 
 1. **時序參數一律進 Devicetree，不准寫死在 C。** 加一條軌只能改 DTS。
 2. **改了 overlay 就一定要看 `make dts`**（`build/<board>/zephyr/zephyr.dts`）。
@@ -178,4 +183,4 @@ ec-ws/                      ← workspace 頂層
 3. 還是不行 → 把完整錯誤訊息貼進 `LOG.md`，標記 `[unsolved]`，先做別的
 4. 解開了 → 回頭補完 LOG，並且問自己：
    **「這是我的問題，還是文件的問題？」** 如果是後者，標 `[upstream candidate]`——
-   那是 W09 挑上游 PR 題目時的清單。
+   那是 P6 挑上游 PR 題目時的清單。

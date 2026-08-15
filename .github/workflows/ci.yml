@@ -24,7 +24,7 @@ jobs:
 
     # Official Zephyr CI image: SDK and host tools preinstalled, so CI does not
     # spend four minutes reinstalling a toolchain on every push.
-    # TODO(W07): pin this to a digest. `latest` contradicts the pinning
+    # TODO(P3): pin this to a digest. `latest` contradicts the pinning
     # discipline applied to Zephyr itself in west.yml -- the only reason it is
     # not pinned yet is that the correct tag has not been verified, and an
     # unverified pin fails closed on every push.

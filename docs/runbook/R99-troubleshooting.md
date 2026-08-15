@@ -146,7 +146,7 @@ VERSION_MINOR = 4
 PATCHLEVEL = 2
 ```
 
-**真的需要完整歷史時**（W09/W10 做上游貢獻要 `git blame`）：
+**真的需要完整歷史時**（P6 做上游貢獻要 `git blame`）：
 ```bash
 cd ~/work/ec-ws/zephyr && git fetch --unshallow
 ```
@@ -228,7 +228,7 @@ make dts
 **確認方式：** 編譯結尾那張表
 ```
 Memory region         Used Size  Region Size  %age Used
-           FLASH:       27728 B       512 KB      5.29%
+           FLASH:       27724 B       512 KB      5.29%
              RAM:        6720 B       128 KB      5.13%
 ```
 `512 KB` / `128 KB` = F411CE ✓
@@ -271,7 +271,7 @@ make test
 
 ## 硬體（板子到貨後才會用到）
 
-> 這一段在 W02 實際接上硬體之後補完。目前先放已知的坑。
+> 這一段在實際接上硬體之後補完。目前先放已知的坑。
 
 ### `west flash` 找不到 ST-Link（WSL 看不到 USB）
 
@@ -304,7 +304,7 @@ usbipd attach --wsl --busid <ID>
 - 先量一個**已知的方波**（例如 blinky 的 LED 腳）驗證儀器跟接線本身沒問題，
   再去量你真正想看的訊號
 
-**不要**用 24 MHz 取樣，用 4 MHz。理由見 `docs/` 的量測章節（W06 補）。
+**不要**用 24 MHz 取樣，用 4 MHz。理由見 [R05 量測](R05-measurement.md)。
 
 ---
 
@@ -325,4 +325,4 @@ usbipd attach --wsl --busid <ID>
 4. **不要從頭讀規格書。** 只讀你的程式碼實際踩到的那一節。
 5. **把錯誤訊息與解法記進 `LOG.md`。** 然後問自己：
    **「這是我的問題，還是文件的問題？」**
-   是後者就標 `[upstream candidate]`——那是 W09 選上游 PR 題目的清單。
+   是後者就標 `[upstream candidate]`——那是 P6 選上游 PR 題目的清單。

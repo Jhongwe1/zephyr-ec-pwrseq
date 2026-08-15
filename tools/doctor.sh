@@ -177,7 +177,7 @@ done
 
 # git identity is not cosmetic here: Zephyr upstream enforces DCO, which
 # requires Signed-off-by to match the commit author exactly, under a real
-# name.  Getting this wrong is discovered at PR time in W10, after the commits
+# name.  Getting this wrong is discovered at PR time in P6, after the commits
 # already exist -- and fixing it then means rewriting history.
 GIT_NAME="$(git -C "$REPO_DIR" config user.name  2>/dev/null || true)"
 GIT_MAIL="$(git -C "$REPO_DIR" config user.email 2>/dev/null || true)"

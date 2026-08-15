@@ -44,9 +44,9 @@ manifest:
     - name: zephyr
       remote: zephyrproject-rtos
       revision: v4.4.2
-      # TODO(W07): once the module set is known (`west list`), narrow this to
+      # TODO(P3): once the module set is known (`west list`), narrow this to
       # `import: {name-allowlist: [...]}`.  A trimmed workspace makes CI
       # noticeably faster.  Not done now: a wrong allowlist fails the build
-      # with a confusing error, and W01 must not be blocked on an
-      # optimisation.  Correctness first, then speed.
+      # with a confusing error, and bringing the toolchain up must not be
+      # blocked on an optimisation.  Correctness first, then speed.
       import: true

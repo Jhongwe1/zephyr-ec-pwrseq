@@ -8,9 +8,9 @@ timing budget live in devicetree rather than in C**, faults are **test cases
 that run in CI without hardware**, and the resulting timing is **measured with
 a logic analyser** rather than asserted.
 
-> **Project status — W01 of 13 (2026-08-12).**
+> **Project status — P0 complete (2026-08-12); P1 is next.**
 > Toolchain, workspace, CI and test plumbing are up and green.
-> The sequencer itself lands in W03. Sections 5 (Measurements) and 6 (Pitfalls)
+> The sequencer itself lands in P1. Sections 5 (Measurements) and 6 (Pitfalls)
 > are deliberately empty until there is something real to put in them.
 > Nothing in this README is aspirational: if it is written as done, it is done.
 >
@@ -47,7 +47,7 @@ is everything around that:
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  PC (host)                                                              │
 │  ├── west build / flash / debug   (ST-Link + OpenOCD)                   │
-│  ├── tools/capture.sh             sigrok capture profiles      (W06)    │
+│  ├── tools/capture.sh             sigrok capture profiles      (P4)     │
 │  └── tools/annotate.py            VCD -> measurement table + figures     │
 └──────────┬──────────────────────────────────┬───────────────────────────┘
            │ UART1 (console + CH7 of capture) │ USB
@@ -162,11 +162,19 @@ entire fault matrix is designed to be verifiable by anyone who clones this repo.
 - [x] Reproducible workspace: this repo is its own west manifest repo, Zephyr
       pinned to a release tag, one-command bootstrap, environment self-check
 - [x] CI building for both targets with warnings-as-errors
-- [ ] Devicetree-driven rail sequencer (W03)
-- [ ] SMF hierarchical state machine, G3→S5→S3→S0→S0ix (W05)
-- [ ] F1–F4 fault handling, reverse shutdown, four invariants (W04–W05)
-- [ ] Fault-injection matrix on `native_sim` + `gpio_emul` (W07)
-- [ ] Logic-analyser capture, annotation and timing budget (W06–W08)
+
+### Roadmap
+
+Phases are ordered rather than dated. The table in
+[RUNBOOK.md](RUNBOOK.md) §1 records the date each one actually landed.
+
+- [ ] **P1** — devicetree-driven rail sequencer
+- [ ] **P2** — SMF hierarchical state machine (G3→S5→S3→S0→S0ix), F1–F4 fault
+      handling, reverse shutdown, four invariants
+- [ ] **P3** — fault-injection matrix on `native_sim` + `gpio_emul`
+- [ ] **P4** — logic-analyser capture, annotation, timing budget
+- [ ] **P5** — one of: SBS battery, ACPI EC interface, hardware-in-the-loop
+- [ ] **P6** — upstream patch to Zephyr
 
 ### Not done, and why
 - **Real eSPI.** The STM32F411 has no eSPI peripheral. `SLP_S3#/S4#/S5#` and
@@ -179,7 +187,7 @@ entire fault matrix is designed to be verifiable by anyone who clones this repo.
 
 ## 5. Measurements and evidence
 
-> **Empty by design until W06.** This section will contain annotated
+> **Empty by design until P4.** This section will contain annotated
 > logic-analyser captures with a time axis, a `t_PG` distribution over 100 boot
 > cycles, the derivation of the `PG` timeout from that distribution, and a
 > cross-check of firmware cycle-counter timestamps against the instrument's

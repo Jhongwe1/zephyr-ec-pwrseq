@@ -12,7 +12,7 @@ target_sources(app PRIVATE
 )
 
 # Sources added as the project grows (kept here as a visible roadmap):
-#   src/pwrseq.c      W03  devicetree-driven rail sequencer
-#   src/smf_states.c  W05  hierarchical state machine
-#   src/invariant.c   W04  independent invariant observer
-#   src/ec_trace.c    W04  cycle-timestamped event ring buffer
+#   src/pwrseq.c      P1  devicetree-driven rail sequencer
+#   src/smf_states.c  P2  hierarchical state machine
+#   src/invariant.c   P2  independent invariant observer
+#   src/ec_trace.c    P2  cycle-timestamped event ring buffer
